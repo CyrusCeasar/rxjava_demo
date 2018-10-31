@@ -1,19 +1,16 @@
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DefaultSubscriber;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 public class backpressure {
 
     public static void main(String[] args) {
-        window();
-
-        try {
-            Thread.sleep(2000*3);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        request();
     }
 
     public static void buffer() {
@@ -27,6 +24,36 @@ public class backpressure {
 
         for (int i = 0; i < 101; i++) {
             source.onNext(i);
+        }
+    }
+
+    public static void request(){
+        Flowable.range(1,1000).subscribe(new CusSubscribtion<>());
+    }
+
+    static class CusSubscribtion<T> implements  Subscriber<T>{
+        Subscription msb;
+
+        @Override
+        public void onSubscribe(Subscription subscription) {
+            msb = subscription;
+            msb.request(1);
+        }
+
+        @Override
+        public void onNext(T t) {
+            System.out.println(t);
+            msb.request(1);
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     }
     public static void window() {
