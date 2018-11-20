@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class RxTransforming {
 
     public static void main(String[] args) {
-        groupBy();
+        concatMap();
     }
 
     public static void map() {
@@ -42,7 +42,6 @@ public class RxTransforming {
 
         Observable.fromIterable(items)
                 .flatMap(s -> {
-                    Util.logCurrentThreadName();
                     final int delay = new Random().nextInt(10);
                     return Observable.just(s + "x")
                             .delay(delay, TimeUnit.SECONDS, scheduler);
@@ -50,7 +49,6 @@ public class RxTransforming {
                 .doOnNext(System.out::println)
                 .subscribe();
 
-        Util.logCurrentThreadName();
         scheduler.advanceTimeBy(1, TimeUnit.MINUTES);
     }
 
@@ -60,22 +58,17 @@ public class RxTransforming {
 
         Observable.fromIterable(items)
                 .switchMap(s -> {
-                    Util.logCurrentThreadName();
                     final int delay = new Random().nextInt(10);
                     return Observable.just(s + "x")
                             .delay(delay, TimeUnit.SECONDS, scheduler);
-//                return Observable.just(s+"x");
                 })
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });
-
-
-        Util.logCurrentThreadName();
+                .doOnNext(System.out::println).subscribe();
         scheduler.advanceTimeBy(1, TimeUnit.MINUTES);
+
+
+/*
+        Util.logCurrentThreadName();
+
         Flowable.fromPublisher(new Publisher<Integer>() {
             @Override
             public void subscribe(Subscriber<? super Integer> subscriber) {
@@ -97,7 +90,7 @@ public class RxTransforming {
 
         }).subscribe(integer -> {
 
-        });
+        });*/
     }
 
 
@@ -109,7 +102,7 @@ public class RxTransforming {
                 .concatMap(s -> {
                     final int delay = new Random().nextInt(10);
                     return Observable.just(s + "x")
-                            .delay(delay, TimeUnit.SECONDS, scheduler).doOnNext(System.out::println);
+                            .delay(delay, TimeUnit.SECONDS, scheduler);
                 })
                 .doOnNext(System.out::println)
                 .subscribe();

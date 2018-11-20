@@ -17,5 +17,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="junit:junit:5.0-SNAPSHOT" level="project" />
   </component>
 </module>

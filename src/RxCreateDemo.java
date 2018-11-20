@@ -2,6 +2,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Action;
+import io.reactivex.plugins.RxJavaPlugins;
 
 import java.io.IOException;
 import java.util.ArrayList;

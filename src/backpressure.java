@@ -57,6 +57,27 @@ public class backpressure {
         }
     }
     public static void window() {
+        Flowable.just("1").subscribe(new Subscriber<String>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+
+            }
+
+            @Override
+            public void onNext(String s) {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
         PublishProcessor<Integer> source = PublishProcessor.create();
         source
                 .window(120)

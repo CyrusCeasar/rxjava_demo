@@ -1,5 +1,7 @@
 import hu.akarnokd.rxjava2.debug.RxJavaAssemblyTracking;
 import io.reactivex.*;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.concurrent.ExecutionException;
@@ -7,9 +9,55 @@ import java.util.concurrent.ExecutionException;
 public class asyncnize {
 
     public static void main(String args[]) {
-        last();
+        onErrorResumeNext();
     }
 
+
+
+    static void onErrorResumeNext(){
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for(int i = 0 ; i< 10; i++){
+                    emitter.onNext(i);
+                }
+                emitter.onError(new Throwable("test"));
+            }
+        }).onErrorResumeNext(new Function<Throwable, ObservableSource<? extends Integer>>() {
+            @Override
+            public ObservableSource<? extends Integer> apply(Throwable throwable) throws Exception {
+                return  Observable.create(new ObservableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                        for(int i = 0 ; i< 10; i++){
+                            emitter.onNext(i);
+                        }
+                        emitter.onError(new Throwable("test"));
+                    }
+                });
+            }
+        }).subscribe(new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                System.out.println("onSubscribe");
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+                System.out.print(integer+"-");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("complete");
+            }
+        });
+    }
 
     static void next() {
         RxJavaAssemblyTracking.enable();
